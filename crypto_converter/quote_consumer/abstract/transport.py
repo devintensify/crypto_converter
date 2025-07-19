@@ -1,4 +1,4 @@
-"""Interface of two-way client able to connect to given url."""
+"""Interface of transport able to connect to given url."""
 
 from abc import ABC, abstractmethod
 from collections.abc import AsyncGenerator, Callable
@@ -9,8 +9,8 @@ MessageHandler = Callable[[str], None]
 JsonType = dict[str, Any] | list[Any]
 
 
-class ITwoWayClient(ABC):
-    """Interface of two-way client.
+class ITransport(ABC):
+    """Interface of transport.
 
     Is able to connect to server by given url and exchange messages with it.
 
