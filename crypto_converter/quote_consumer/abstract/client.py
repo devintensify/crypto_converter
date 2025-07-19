@@ -20,7 +20,12 @@ class ITwoWayClient(ABC):
 
     @abstractmethod
     async def connect(self) -> None:
-        """Establish connection with remote server."""
+        """Establish connection with remote server.
+
+        Raises:
+            `ConnectionRefusedError`: if failed to connect to server.
+
+        """
 
     @abstractmethod
     async def send(self, message: JsonType) -> None:
@@ -28,6 +33,9 @@ class ITwoWayClient(ABC):
 
         Args:
             message (`JsonType`): JSON-encoded message.
+
+        Raises:
+            `ConnectionResetError`: if connection is closed.
 
         """
 
@@ -37,6 +45,9 @@ class ITwoWayClient(ABC):
 
         Returns:
             `AsyncGenerator[JsonType]`: asynchronous generator yielding messages.
+
+        Raises:
+            `ConnectionResetError`: if connection is closed.
 
         """
         yield {}
