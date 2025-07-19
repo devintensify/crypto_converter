@@ -1,0 +1,42 @@
+"""Interface of two-way client able to connect to given url."""
+
+from abc import ABC, abstractmethod
+from collections.abc import AsyncGenerator, Callable
+from typing import Any
+
+MessageHandler = Callable[[str], None]
+
+JsonType = dict[str, Any] | list[Any]
+
+
+class ITwoWayClient(ABC):
+    """Interface of two-way client.
+
+    Is able to connect to server by given url and exchange messages with it.
+
+    Works with JSON-encoded data.
+
+    """
+
+    @abstractmethod
+    async def connect(self) -> None:
+        """Establish connection with remote server."""
+
+    @abstractmethod
+    async def send(self, message: JsonType) -> None:
+        """Send message to remote server.
+
+        Args:
+            message (`JsonType`): JSON-encoded message.
+
+        """
+
+    @abstractmethod
+    async def listen(self) -> AsyncGenerator[JsonType]:
+        """Read and yield messages from remote server.
+
+        Returns:
+            `AsyncGenerator[JsonType]`: asynchronous generator yielding messages.
+
+        """
+        yield {}
