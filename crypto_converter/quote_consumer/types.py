@@ -6,9 +6,14 @@ import msgspec
 class Quote(msgspec.Struct):
     """Data model of ticker price for instrument."""
 
-    timestamp: str
+    timestamp: int
+    """Received timestamp."""
+
     instrument: str
+    """Instrument name in `BASE`/`QUOTE` notation."""
+
     value: float
+    """Ticker mid-price value."""
 
 
 QuotesContainer = dict[str, list[Quote]]

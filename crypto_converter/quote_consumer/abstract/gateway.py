@@ -21,8 +21,12 @@ class IGateway(ABC):
     _transport: ITransport
 
     @abstractmethod
-    async def subscribe_to_quotes(self) -> None:
-        """Send subscription message to exchange using underlying transport."""
+    async def start(self) -> None:
+        """Start gateway."""
+
+    @abstractmethod
+    async def stop(self) -> None:
+        """Stop gateway."""
 
     @abstractmethod
     def handle_message(self, message: JsonType) -> None:
