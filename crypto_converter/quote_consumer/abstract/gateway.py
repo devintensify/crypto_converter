@@ -5,14 +5,9 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Protocol
 
-from crypto_converter.quote_consumer.types import Quote
-
 if TYPE_CHECKING:
     from crypto_converter.quote_consumer.abstract.transport import ITransport, JsonType
-
-
-QuotesContainer = dict[str, list[Quote]]
-"""Mapping (instrument -> array of received quotes.)"""
+    from crypto_converter.quote_consumer.types import QuotesContainer
 
 
 class IGateway(ABC):

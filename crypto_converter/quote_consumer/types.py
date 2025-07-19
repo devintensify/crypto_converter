@@ -9,3 +9,7 @@ class Quote(msgspec.Struct):
     timestamp: str
     instrument: str
     value: float
+
+
+QuotesContainer = dict[str, list[Quote]]
+"""Mapping (instrument -> array of received quotes.)"""
