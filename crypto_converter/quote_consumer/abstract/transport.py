@@ -51,3 +51,7 @@ class ITransport(ABC):
 
         """
         yield {}
+
+    @abstractmethod
+    async def close(self) -> None:
+        """Close connection to remote server."""
