@@ -30,3 +30,13 @@ def setup_logger() -> None:
     file_handler.setFormatter(formatter)
 
     logger.addHandler(file_handler)
+
+
+def get_logger() -> logging.Logger:
+    """Get `quote_consumer` logger.
+
+    Returns:
+        `logging.Logger`: `quote_consumer` logger.
+
+    """
+    return logging.getLogger("quote_consumer")

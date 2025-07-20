@@ -1,13 +1,13 @@
 """Proxy implementation of `ITransport` using multiple transport instances."""
 
 import asyncio
-import logging
 from collections.abc import AsyncGenerator
 from typing import cast
 
 from crypto_converter.quote_consumer.abstract.transport import ITransport, JsonType
+from crypto_converter.quote_consumer.log import get_logger
 
-logger = logging.getLogger("quote_consumer")
+logger = get_logger()
 
 _SENTINEL = cast("dict", object())
 
