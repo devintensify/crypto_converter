@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-from crypto_converter.quote_consumer.types import QuotesContainer
+from crypto_converter.quote_consumer.utils import QuotesContainer
 
 
 class IQuotesWriter(ABC):

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
     from crypto_converter.quote_consumer.abstract.transport import ITransport, JsonType
-    from crypto_converter.quote_consumer.types import QuotesContainer
+    from crypto_converter.quote_consumer.utils import QuotesContainer
 
 
 class IGateway(ABC):

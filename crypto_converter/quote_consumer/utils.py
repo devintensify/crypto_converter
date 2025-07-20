@@ -1,4 +1,4 @@
-"""Module with types and data models."""
+"""Module with types, utils and data models."""
 
 import msgspec
 

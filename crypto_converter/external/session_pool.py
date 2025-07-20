@@ -15,7 +15,7 @@ class ClientSessionPool:
     Should be instantiated on runtime using `get_instance` class method.
     """
 
-    _instance: Self
+    _instance: Self | None = None
 
     @classmethod
     def get_instance(cls) -> Self:
