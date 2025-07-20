@@ -7,7 +7,7 @@ class Quote(msgspec.Struct):
     """Data model of ticker price for instrument."""
 
     timestamp: int
-    """Received timestamp."""
+    """Received timestamp (in milliseconds)."""
 
     value: float
     """Ticker mid-price value."""
