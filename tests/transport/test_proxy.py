@@ -115,11 +115,15 @@ async def test_background_listen_connection_reset_handled() -> None:
     assert item is _SENTINEL
 
 
-def test_put_in_local_queue_fallback(capfd: pytest.CaptureFixture[str]) -> None:
+def test_put_in_local_queue_fallback(caplog: pytest.LogCaptureFixture) -> None:
     proxy = ProxyTransport({}, local_queue_max_size=1)
     proxy._local_messages_queue.put_nowait({"num": "first"})
 
-    proxy._put_in_local_queue({"num": "second"})
+    with caplog.at_level("CRITICAL", logger="quote_consumer"):
+        proxy._put_in_local_queue({"num": "second"})
 
-    out, _ = capfd.readouterr()
-    assert "local queue is full" in out
+    assert any(
+        "local queue is full" in record.message
+        for record in caplog.records
+        if record.levelname == "CRITICAL"
+    )
