@@ -10,8 +10,17 @@ class IQuotesReader(ABC):
     """
 
     @abstractmethod
+    async def open(self) -> None:
+        """Open connection to external storage.
+
+        Raises:
+            `ConnectionRefusedError`: if unable to connect to external storage.
+
+        """
+
+    @abstractmethod
     async def query(self, instrument: str, timestamp: int | None = None) -> None:
-        """Query external resource for ticker price.
+        """Query external storage for ticker price.
 
         Args:
             instrument (`str`): instrument name in BASE/QUOTE notation.

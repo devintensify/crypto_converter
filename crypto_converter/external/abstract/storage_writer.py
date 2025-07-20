@@ -12,11 +12,23 @@ class IQuotesWriter(ABC):
     """
 
     @abstractmethod
+    async def open(self) -> None:
+        """Open connection to external resource.
+
+        Raises:
+            `ConnectionRefusedError`: if unable to connect to external resource.
+
+        """
+
+    @abstractmethod
     async def write(self, quotes: QuotesContainer) -> None:
         """Serialize and write records to external source.
 
         Args:
             quotes (`QuotesContainer`): quotes arrays by instrument name.
+
+        Raises:
+            `ConnectionResetError`: if connection is closed.
 
         """
 
@@ -26,6 +38,9 @@ class IQuotesWriter(ABC):
 
         Args:
             later_than_timestamp (`int`): given timestamp.
+
+        Raises:
+            `ConnectionResetError`: if connection is closed.
 
         """
 
