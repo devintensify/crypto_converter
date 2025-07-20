@@ -1,10 +1,13 @@
 """Proxy implementation of `ITransport` using multiple transport instances."""
 
 import asyncio
+import logging
 from collections.abc import AsyncGenerator
 from typing import cast
 
 from crypto_converter.quote_consumer.abstract.transport import ITransport, JsonType
+
+logger = logging.getLogger("quote_consumer")
 
 _SENTINEL = cast("dict", object())
 
@@ -103,7 +106,7 @@ class ProxyTransport(ITransport):
         try:
             self._local_messages_queue.put_nowait(object_)
         except asyncio.QueueFull:
-            print(  # noqa: T201
+            logger.critical(
                 "`_put_in_local_queue`; local queue is full. "
                 "This must not happen on runtime. "
                 "Consider greater `local_queue_max_size` setting."

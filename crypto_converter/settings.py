@@ -11,6 +11,9 @@ class TransportConfig(BaseModel):
     """Transport settings."""
 
     connections: dict[str, int] = Field(default_factory=lambda: {"wss": 1})
+    local_queue_max_size: int = Field(
+        default=10_000, description="Local queue maxsize. Used in proxy transport."
+    )
 
 
 class QuoteConsumerConfig(BaseModel):
