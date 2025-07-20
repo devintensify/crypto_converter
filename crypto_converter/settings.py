@@ -1,7 +1,7 @@
 """Provider of project settings."""
 
 from pathlib import Path
-from typing import Self
+from typing import Any, Self
 
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -53,6 +53,16 @@ class Settings(BaseSettings):
     )
 
     model_config = SettingsConfigDict(env_file=".env", env_nested_delimiter="__")
+
+    def model_post_init(self, _: dict[str, Any] | None) -> None:
+        """Additional validation logic for settings model."""
+        if self.database_type == "clickhouse" and self.clickhouse is None:
+            error_message = (
+                "Expected clickhouse__* parameters in environmental variables. "
+                "Please set different `database_type` or "
+                "declare clickhouse env variables in your .env file."
+            )
+            raise ValueError(error_message)
 
 
 class SettingsProvider:
