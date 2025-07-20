@@ -37,6 +37,10 @@ class IGateway(ABC):
 
         """
 
+    @abstractmethod
+    def as_publisher(self) -> GatewayPublisherP:
+        """Represent self as object implementing `GatewayPublisherP`."""
+
 
 class GatewayObserverP(Protocol):
     """Observer protocol to be implemented by concrete `GatewayPublisherP` observers."""
