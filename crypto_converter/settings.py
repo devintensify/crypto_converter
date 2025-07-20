@@ -1,5 +1,6 @@
 """Provider of project settings."""
 
+from pathlib import Path
 from typing import Self
 
 from pydantic import BaseModel, Field
@@ -13,7 +14,9 @@ class TransportConfig(BaseModel):
 
 
 class QuoteConsumerConfig(BaseModel):
-    """Settings for quotes dumper."""
+    """Quotes consumer settings."""
+
+    logs_path: Path = Field(description="Path to directory to store logs in.")
 
     flush_period: int = Field(
         default=30,
@@ -31,8 +34,8 @@ class Settings(BaseSettings):
     exchange_name: str = Field(description="Name of crypto exchange to get quotes from")
     database_type: str = Field(description="External storage to read from / write to")
 
-    transport: TransportConfig = Field(default_factory=TransportConfig)
-    quote_consumer: QuoteConsumerConfig = Field(default_factory=QuoteConsumerConfig)
+    transport: TransportConfig = Field(description="Transport settings")
+    quote_consumer: QuoteConsumerConfig = Field(description="Quotes consumer settings")
 
     model_config = SettingsConfigDict(env_file=".env", env_nested_delimiter="__")
 
