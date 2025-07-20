@@ -31,6 +31,15 @@ class QuoteConsumerConfig(BaseModel):
     )
 
 
+class ClickHouseConfig(BaseModel):
+    """ClickHouse configuration settings.
+
+    Is a demo version without auth.
+    """
+
+    dsn: str = Field(description="Clickhouse DSN")
+
+
 class Settings(BaseSettings):
     """Env settings."""
 
@@ -39,6 +48,9 @@ class Settings(BaseSettings):
 
     transport: TransportConfig = Field(description="Transport settings")
     quote_consumer: QuoteConsumerConfig = Field(description="Quotes consumer settings")
+    clickhouse: ClickHouseConfig | None = Field(
+        default=None, description="ClickHouse configuration settings"
+    )
 
     model_config = SettingsConfigDict(env_file=".env", env_nested_delimiter="__")
 
