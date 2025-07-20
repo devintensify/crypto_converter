@@ -19,9 +19,7 @@ class IQuotesReader(ABC):
         """
 
     @abstractmethod
-    async def query(
-        self, instrument: str, timestamp: int | None = None
-    ) -> float | None:
+    async def query(self, instrument: str, timestamp: int | None = None) -> float:
         """Query external storage for ticker price.
 
         Args:
@@ -29,10 +27,12 @@ class IQuotesReader(ABC):
             timestamp (`Optional[int]`): timestamp to query for.
 
         Returns:
-            `Optional[float]`: ticker price from table (if found).
+            `float`: ticker price from table (if found).
 
         Raises:
             `ConnectionResetError`: if unable to connect to external storage.
+            `InstrumentNotFoundError`: if no ticker data found for instrument.
+            `TickerOutdatedError`: if latest stored ticker data is outdated.
 
         """
 

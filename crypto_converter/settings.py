@@ -16,6 +16,15 @@ class TransportConfig(BaseModel):
     )
 
 
+class ClickHouseConfig(BaseModel):
+    """ClickHouse configuration settings.
+
+    Is a demo version without auth.
+    """
+
+    dsn: str = Field(description="Clickhouse DSN")
+
+
 class QuoteConsumerConfig(BaseModel):
     """Quotes consumer settings."""
 
@@ -31,13 +40,12 @@ class QuoteConsumerConfig(BaseModel):
     )
 
 
-class ClickHouseConfig(BaseModel):
-    """ClickHouse configuration settings.
+class QuoteReaderConfig(BaseModel):
+    """Quotes reader settings."""
 
-    Is a demo version without auth.
-    """
-
-    dsn: str = Field(description="Clickhouse DSN")
+    outdated_interval: int = Field(
+        default=60, description="Time window threshold to check for outdated quotes"
+    )
 
 
 class Settings(BaseSettings):
@@ -47,10 +55,12 @@ class Settings(BaseSettings):
     database_type: str = Field(description="External storage to read from / write to")
 
     transport: TransportConfig = Field(description="Transport settings")
-    quote_consumer: QuoteConsumerConfig = Field(description="Quotes consumer settings")
     clickhouse: ClickHouseConfig | None = Field(
         default=None, description="ClickHouse configuration settings"
     )
+
+    quote_consumer: QuoteConsumerConfig = Field(description="Quotes consumer settings")
+    quote_reader: QuoteReaderConfig = Field(description="Quotes reader settings")
 
     model_config = SettingsConfigDict(env_file=".env", env_nested_delimiter="__")
 
