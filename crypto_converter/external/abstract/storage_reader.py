@@ -18,3 +18,7 @@ class IQuotesReader(ABC):
             timestamp (`Optional[int]`): timestamp to query for.
 
         """
+
+    @abstractmethod
+    async def close(self) -> None:
+        """Close quotes reader. Close connection to external storage."""

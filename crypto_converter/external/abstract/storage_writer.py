@@ -28,3 +28,7 @@ class IQuotesWriter(ABC):
             later_than_timestamp (`int`): given timestamp.
 
         """
+
+    @abstractmethod
+    async def close(self) -> None:
+        """Close qoutes writer. Close connection to external storage."""

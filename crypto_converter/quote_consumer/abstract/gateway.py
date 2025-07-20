@@ -68,5 +68,5 @@ class GatewayPublisherP(Protocol):
 
         """
 
-    def on_quotes_update(self) -> None:
+    def _on_quotes_update(self) -> None:
         """Notify all observers on quotes update event."""
