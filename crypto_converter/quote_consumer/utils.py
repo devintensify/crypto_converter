@@ -9,9 +9,6 @@ class Quote(msgspec.Struct):
     timestamp: int
     """Received timestamp."""
 
-    instrument: str
-    """Instrument name in `BASE`/`QUOTE` notation."""
-
     value: float
     """Ticker mid-price value."""
 
