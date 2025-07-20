@@ -80,6 +80,8 @@ class ProxyTransport(ITransport):
                 task for task in background_tasks if not task.done()
             ]
             if running_background_tasks:
+                for running_task in running_background_tasks:
+                    running_task.cancel()
                 await asyncio.gather(*running_background_tasks)
 
     async def close(self) -> None:
@@ -96,7 +98,7 @@ class ProxyTransport(ITransport):
         try:
             async for message in transport.listen():
                 self._put_in_local_queue(message)
-        except ConnectionResetError:
+        except (ConnectionResetError, asyncio.CancelledError):
             pass
         finally:
             self._put_in_local_queue(_SENTINEL)
