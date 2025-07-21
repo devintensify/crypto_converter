@@ -6,7 +6,11 @@ from contextlib import suppress
 from aiohttp import ClientWebSocketResponse
 
 from crypto_converter.external.session_pool import ClientSessionPool
+from crypto_converter.log import log_awaitable_method
 from crypto_converter.quote_consumer.abstract.transport import ITransport, JsonType
+from crypto_converter.quote_consumer.log import get_logger
+
+logger = get_logger()
 
 
 class WebSocketTransport(ITransport):
@@ -23,6 +27,13 @@ class WebSocketTransport(ITransport):
         assert self._connection  # noqa: S101
         return self._connection
 
+    def __repr__(self) -> str:
+        """Represent `WebSocketTransport` as connection url."""
+        return f"{self.__class__.__name__}({self._url})"
+
+    @log_awaitable_method(
+        logger_name="quote_consumer", level_on_attempt="info", use_class_repr=True
+    )
     async def connect(self) -> None:
         """Connect to external resource using wss protocol.
 
@@ -39,6 +50,7 @@ class WebSocketTransport(ITransport):
 
             self._connection = connection
 
+    @log_awaitable_method(logger_name="quote_consumer", use_class_repr=True)
     async def send(self, message: JsonType) -> None:
         """Send message to external resourse using websocket channel."""
         if self._disconnected():
@@ -54,13 +66,20 @@ class WebSocketTransport(ITransport):
         if self._disconnected():
             raise ConnectionResetError
 
-        while True:
-            try:
-                message = await self.connection.receive_json()
-            except Exception as exc:
-                raise ConnectionResetError from exc
-            yield message
+        logger.debug("`%s`: Start listening to incoming messages..", repr(self))
+        try:
+            while True:
+                try:
+                    message = await self.connection.receive_json()
+                except Exception as exc:
+                    raise ConnectionResetError from exc
+                yield message
+        finally:
+            logger.debug("`%s`: Stopped listening to incoming messages", repr(self))
 
+    @log_awaitable_method(
+        logger_name="quote_consumer", level_on_attempt="info", use_class_repr=True
+    )
     async def close(self) -> None:
         """Close underlying websocket connection."""
         if self._disconnected():

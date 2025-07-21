@@ -4,6 +4,7 @@ import asyncio
 from collections.abc import AsyncGenerator
 from typing import cast
 
+from crypto_converter.log import log_awaitable_method
 from crypto_converter.quote_consumer.abstract.transport import ITransport, JsonType
 from crypto_converter.quote_consumer.log import get_logger
 
@@ -38,6 +39,7 @@ class ProxyTransport(ITransport):
         )
         self._closing: bool = False
 
+    @log_awaitable_method(logger_name="quote_consumer", level_on_attempt="info")
     async def connect(self) -> None:
         """Call `connect()` method in all underlying transports.
 
@@ -84,6 +86,7 @@ class ProxyTransport(ITransport):
                     running_task.cancel()
                 await asyncio.gather(*running_background_tasks)
 
+    @log_awaitable_method(logger_name="quote_consumer", level_on_attempt="info")
     async def close(self) -> None:
         """Call `close()` method in all underlying transports."""
         await asyncio.gather(
