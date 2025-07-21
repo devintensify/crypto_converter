@@ -1,5 +1,6 @@
 """Provider of project settings."""
 
+import argparse
 from pathlib import Path
 from typing import Any, Self
 
@@ -62,7 +63,7 @@ class Settings(BaseSettings):
     quote_consumer: QuoteConsumerConfig = Field(description="Quotes consumer settings")
     quote_reader: QuoteReaderConfig = Field(description="Quotes reader settings")
 
-    model_config = SettingsConfigDict(env_file=".env", env_nested_delimiter="__")
+    model_config = SettingsConfigDict(env_nested_delimiter="__")
 
     def model_post_init(self, _: dict[str, Any] | None) -> None:
         """Additional validation logic for settings model."""
@@ -100,6 +101,8 @@ class SettingsProvider:
 
     def __init__(self) -> None:
         """Initialize `SettingsProvider`."""
+        env_file = self._get_env_file()
+        Settings.model_config["env_file"] = env_file
         self._settings = Settings()
 
     def get_settings(self) -> Settings:
@@ -110,3 +113,30 @@ class SettingsProvider:
 
         """
         return self._settings
+
+    @staticmethod
+    def _get_env_file() -> str:
+        """Get env file name based on command line args.
+
+        Returns:
+            `str`: env file name to load settings from.
+
+        """
+        parser = argparse.ArgumentParser()
+        parser.add_argument(
+            "--env",
+            choices=["default", "docker"],
+            default="default",
+            help="Select .env file to load: 'default' = .env, 'docker' = .env.docker",
+        )
+        namespace = parser.parse_args()
+        env_file: str
+        match namespace.env:
+            case "default":
+                env_file = ".env"
+            case "docker":
+                env_file = ".env.docker"
+            case _:
+                message = "Code supposed to be unreachable."
+                raise RuntimeError(message)
+        return env_file

@@ -9,3 +9,11 @@ services:
     environment:
       CLICKHOUSE_USER: test
       CLICKHOUSE_PASSWORD: "123"
+  quote_consumer:
+    build: .
+    container_name: quotes_runner
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONPATH=/app
+    command: [ "uv", "run", "crypto_converter/quote_consumer/main.py", "--env=docker" ]
