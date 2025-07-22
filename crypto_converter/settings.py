@@ -44,6 +44,8 @@ class QuoteConsumerConfig(BaseModel):
 class QuoteReaderConfig(BaseModel):
     """Quotes reader settings."""
 
+    logs_path: Path = Field(description="Path to directory to store logs in.")
+
     outdated_interval: int = Field(
         default=60, description="Time window threshold to check for outdated quotes"
     )
@@ -129,7 +131,7 @@ class SettingsProvider:
             default="default",
             help="Select .env file to load: 'default' = .env, 'docker' = .env.docker",
         )
-        namespace = parser.parse_args()
+        namespace, _ = parser.parse_known_args()
         env_file: str
         match namespace.env:
             case "default":
