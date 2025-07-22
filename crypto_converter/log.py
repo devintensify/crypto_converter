@@ -57,8 +57,9 @@ def log_awaitable_method(
                 result = await method(self, *args, **kwargs)
                 attempt_logger("%s: succeeded", method_repr)
             except Exception as exc:
+                exc_repr = f"Type={type(exc)}, Args={exc.args}, Message={exc}"
                 error_logger = getattr(logger, level_on_error)
-                error_logger("%s: failed with error: `%s`", method_repr, str(exc))
+                error_logger("%s: failed with error: `%s`", method_repr, exc_repr)
                 raise
             else:
                 return result

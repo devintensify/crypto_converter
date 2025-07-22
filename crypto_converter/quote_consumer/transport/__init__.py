@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 from crypto_converter.quote_consumer.abstract.transport import ITransport
 from crypto_converter.quote_consumer.transport.proxy import ProxyTransport
 from crypto_converter.quote_consumer.transport.websocket import WebSocketTransport
@@ -27,11 +29,16 @@ def _get_simple_transport(url: str, transport_protocol: str) -> ITransport:
     return result
 
 
-def get_transport(url: str) -> ITransport:
+_TransportUrlFactory = Callable[[str], str]
+"""Method matching url according to selected protocol."""
+
+
+def get_transport(url_factory: _TransportUrlFactory) -> ITransport:
     """Create transport based on settings to be used on runtime.
 
     Args:
-        url (`str`): external resource identifier to be given to transport.
+        url_factory (`_TransportUrlFactory`): Method matching url \
+            according to selected protocol.
 
     Returns:
         `ITransport`: transport instance.
@@ -44,6 +51,7 @@ def get_transport(url: str) -> ITransport:
     connections = transport_config.connections
     transports: dict[str, ITransport] = {}
     for connection_protocol, number_of_connections in connections.items():
+        url = url_factory(connection_protocol)
         for index in range(number_of_connections):
             transports[f"{connection_protocol}-{index}"] = _get_simple_transport(
                 url, connection_protocol
