@@ -1,10 +1,14 @@
 """Module with types, utils and data models."""
 
-import msgspec
+from typing import TypedDict
 
 
-class Quote(msgspec.Struct):
-    """Data model of ticker price for instrument."""
+class Quote(TypedDict):
+    """Data model of ticker price for instrument.
+
+    Do not use models with validation as it is redundant in case
+    of one-way dumps.
+    """
 
     timestamp: int
     """Received timestamp (in milliseconds)."""
