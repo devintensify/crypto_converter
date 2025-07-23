@@ -1,7 +1,7 @@
 """Auxiliary logging utilities."""
 
 import logging
-from collections.abc import Awaitable, Callable
+from collections.abc import Callable, Coroutine
 from typing import Any, Concatenate, Literal, ParamSpec, TypeVar
 
 _T = TypeVar("_T")  # self / instance
@@ -12,7 +12,7 @@ _LogLevel = Literal["debug", "info", "warning", "error", "critical", "exception"
 """Log level."""
 
 
-_AsyncMethodType = Callable[Concatenate[_T, _P], Awaitable[_R]]
+_AsyncMethodType = Callable[Concatenate[_T, _P], Coroutine[Any, Any, _R]]
 """Type alias for asynchronous instance method."""
 
 _MethodType = Callable[Concatenate[_T, _P], _R]
@@ -26,7 +26,7 @@ def log_awaitable_method(
     level_on_error: _LogLevel = "error",
     use_class_repr: bool = False,
     log_kwargs: list[str] | None = None,
-) -> Any:
+) -> Callable[[_AsyncMethodType[_T, _P, _R]], _AsyncMethodType[_T, _P, _R]]:
     """Get logging decorator for asynchronous instance method.
 
     Args:
@@ -84,7 +84,7 @@ def log_method(
     level_on_error: _LogLevel = "error",
     use_class_repr: bool = False,
     log_kwargs: list[str] | None = None,
-) -> Any:
+) -> Callable[[_MethodType[_T, _P, _R]], _MethodType[_T, _P, _R]]:
     """Get logging decorator for instance method.
 
     Args:

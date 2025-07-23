@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
-    from crypto_converter.quote_consumer.abstract.transport import ITransport, JsonType
+    from crypto_converter.quote_consumer.abstract.transport import JsonType
     from crypto_converter.quote_consumer.utils import QuotesContainer
 
 
@@ -15,10 +15,8 @@ class IGateway(ABC):
 
     Is able to subscribe to specific market data and handle messages from exchange.
 
-    Owns `ITransport` and controls its lifetime.
+    Owns `ITransport` instances and controls their lifetime.
     """
-
-    _transport: ITransport
 
     @abstractmethod
     async def start(self) -> None:
