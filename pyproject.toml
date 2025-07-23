@@ -31,7 +31,7 @@ unsafe-fixes = false
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = ["CPY001", "D104", "D211", "D213", "D203", "COM812", "ANN401", "FBT001", "BLE001"]
+ignore = ["CPY001", "D104", "D211", "D213", "D203", "COM812", "ANN401", "FBT001", "BLE001", "UP007"]
 fixable = ["ALL"]
 unfixable = []
 

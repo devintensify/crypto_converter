@@ -35,18 +35,19 @@ class ConversionHandler:
     @log_awaitable_method(logger_name="converter_api")
     async def convert(
         self, params: models.ConvertQueryParams
-    ) -> models.BaseResponseModel:
+    ) -> models.ConvertResponse | models.ConvertResponseError:
         """Execute valid conversion request.
 
         Args:
             params (`ConvertQueryParams`): valid data model of conversion request.
 
         Returns:
-            `BaseResponseModel`: `Response` or `Error` data model.
+            `UnionConvertResponse,ConvertResponseError]`: \
+                `Response` or `Error` data model.
 
         """
         instrument_name = f"{params.from_asset}/{params.to_asset}"
-        response: models.BaseResponseModel
+        response: models.ConvertResponse | models.ConvertResponseError
         try:
             conversion_rate = await self._quotes_reader.query(
                 instrument_name, timestamp=params.timestamp

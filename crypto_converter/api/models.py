@@ -1,8 +1,7 @@
 """Data models to be used by app requests handlers."""
 
 import re
-from abc import ABC
-from typing import Any, ClassVar
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -32,64 +31,50 @@ class ConvertQueryParams(BaseModel):
             raise ValueError(error_message)
 
 
-class BaseResponseModel(BaseModel, ABC):
-    """Base model for handler response.
-
-    Has class variable `http_code` for routing logic.
-    """
-
-    http_code: ClassVar[int]
-
-
-class ConvertResponse(BaseResponseModel):
+class ConvertResponse(BaseModel):
     """Response of successful conversion request processing."""
 
-    http_code = 200
-
-    amount: float
-    conversion_rate: float
+    amount: float = Field(description="Amount in the target currency")
+    conversion_rate: float = Field(description="Conversion rate used.")
 
 
-class ConvertResponseError(BaseResponseModel):
+class ConvertResponseError(BaseModel):
     """Base response of conversion request error.
 
     Contains `code` corresponding to each subclass model and optional message.
     """
 
-    code: str
-    message: str | None = Field(default=None)
+    code: str = Field(description="Short message about error type.")
+    message: str | None = Field(
+        default=None, description="Additional information about error."
+    )
 
 
 class ConvertResponseQuoteOutdatedError(ConvertResponseError):
     """Response for error in case if requested ticker data is stale."""
 
-    http_code = 201
     code: str = Field(default="Quotes outdated.", frozen=True)
 
 
 class ConvertResponseNoQuotesError(ConvertResponseError):
     """Response for error in case if requested ticker data is absent."""
 
-    http_code = 201
     code: str = Field(default="No data for ticker.", frozen=True)
 
 
 class ConvertResponseInternalError(ConvertResponseError):
     """Response for internal server error."""
 
-    http_code = 500
     code: str = Field(default="Internal error.", frozen=True)
 
 
 class ConvertResponseInvalidQueryError(ConvertResponseError):
     """Response for invalid query params."""
 
-    http_code = 400
     code: str = Field(default="Bad request.", frozen=True)
 
 
-class HealthCheckResponse(BaseResponseModel):
+class HealthCheckResponse(BaseModel):
     """Response of successful health check."""
 
-    http_code = 200
-    status: str = Field(default="OK", frozen=True)
+    status: str = Field(default="OK", description="Application status.", frozen=True)
