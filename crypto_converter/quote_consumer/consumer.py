@@ -20,6 +20,8 @@ class QuoteConsumer:
     """Quotes consumer object.
 
     Implements top-level logic of `quote_consumer` service.
+
+    Is a demo version subscribing to only one `GatewayPublisherP`.
     """
 
     @log_method(

@@ -1,4 +1,7 @@
-"""Logger setup function to be called at entrypoint."""
+"""Logger setup function to be called at entrypoint.
+
+Is a demo version with basic file handler.
+"""
 
 import logging
 from datetime import UTC, datetime

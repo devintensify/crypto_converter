@@ -1,4 +1,7 @@
-"""Implementation of `IGateway` working with bybit."""
+"""Implementation of `IGateway` working with bybit.
+
+Is a demo version without unit tests.
+"""
 
 import asyncio
 import time

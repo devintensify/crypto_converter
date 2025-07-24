@@ -1,4 +1,7 @@
-"""Quotes i/o tools working with clickhouse."""
+"""Quotes i/o tools working with clickhouse.
+
+Is a demo version without integration tests.
+"""
 
 import time
 from contextlib import suppress

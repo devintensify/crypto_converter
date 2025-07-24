@@ -1,4 +1,4 @@
-"""Provider of project settings."""
+"""Provider of parsed project settings."""
 
 import argparse
 from pathlib import Path
