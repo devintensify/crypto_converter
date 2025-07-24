@@ -2,6 +2,7 @@
 
 import argparse
 import asyncio
+from contextlib import suppress
 
 from uvicorn import Config, Server
 
@@ -29,7 +30,8 @@ async def _main() -> None:
 
 def main() -> None:
     """Run Converter API."""
-    asyncio.run(_main())
+    with suppress(asyncio.CancelledError, KeyboardInterrupt):
+        asyncio.run(_main())
 
 
 if __name__ == "__main__":

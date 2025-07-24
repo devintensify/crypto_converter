@@ -14,9 +14,7 @@ services:
     container_name: quotes_runner
     volumes:
       - ./logs:/app/logs
-    environment:
-      - PYTHONPATH=/app
-    command: [ "uv", "run", "crypto_converter/quote_consumer/main.py", "--env=docker" ]
+    command: [ "uv", "run", "python", "-m", "crypto_converter.quote_consumer.main", "--env=docker" ]
   converter_api:
     build: .
     container_name: api
@@ -24,6 +22,4 @@ services:
       - "8000:8000"
     volumes:
       - ./logs:/app/logs
-    environment:
-      - PYTHONPATH=/app
-    command: [ "uv", "run", "crypto_converter/api/main.py", "--host=0.0.0.0", "--port=8000", "--env=docker" ]
+    command: [ "uv", "run", "python", "-m", "crypto_converter.api.main", "--host=0.0.0.0", "--port=8000", "--env=docker" ]

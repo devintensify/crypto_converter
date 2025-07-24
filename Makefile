@@ -9,7 +9,7 @@ help:
 	@echo "  make setup    - Create virtual env and install dependencies"
 	@echo "  make lint     - Run Ruff linter"
 	@echo "  make format   - Run isort and Ruff formatter"
-	@echo "  make prod     - Run complex code checking: format, lint, unit tests"
+	@echo "  make prod     - Run complex code checking: format, lint, unit tests. Is highly recommended to use before pushing commits."
 	@echo "  make test     - Run unit tests"
 	@echo "  make test-cov - Run unit tests with code coverage report"
 
