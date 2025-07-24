@@ -42,7 +42,7 @@ class QuoteConsumer:
         ).get_writer()
 
         self._local_queue: asyncio.Queue[QuotesContainer] = asyncio.Queue()
-        self._flush_period = settings.quote_consumer.flush_period
+        self._flush_interval = settings.quote_consumer.flush_interval
         self._last_flushed: float | None = None
 
     @log_awaitable_method(logger_name="quote_consumer", level_on_attempt="info")
@@ -80,13 +80,15 @@ class QuoteConsumer:
     async def _delete_old_records_task(self) -> None:
         """Periodically delete old records from external storage."""
         writer = self._writer
-        delete_period = (
-            SettingsProvider.get_instance().get_settings().quote_consumer.delete_period
+        delete_interval = (
+            SettingsProvider.get_instance()
+            .get_settings()
+            .quote_consumer.delete_interval
         )
-        delete_period_timedelta = timedelta(days=delete_period)
+        delete_interval_timedelta = timedelta(days=delete_interval)
         delete_interval = 10 * 60  # 10 minutes
         while True:
-            datetime_left_boundary = datetime.now(tz=UTC) - delete_period_timedelta
+            datetime_left_boundary = datetime.now(tz=UTC) - delete_interval_timedelta
             timestamp_left_boundary = int(datetime_left_boundary.timestamp() * 1e3)
             await asyncio.gather(
                 writer.delete_old_records(later_than_timestamp=timestamp_left_boundary),
@@ -99,13 +101,13 @@ class QuoteConsumer:
 
         Flush updates after specific interval.
         """
-        flush_period = self._flush_period
+        flush_interval = self._flush_interval
 
         while True:
             now = time.monotonic()
             last_flushed = self._last_flushed
             quotes = await self._local_queue.get()
-            if last_flushed is None or now - last_flushed > flush_period:
+            if last_flushed is None or now - last_flushed > flush_interval:
                 await self._writer.write(quotes)
                 self._last_flushed = now
 

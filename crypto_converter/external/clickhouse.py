@@ -5,6 +5,7 @@ from contextlib import suppress
 
 from aiochclient import ChClient
 from aiohttp import ClientSession
+from pydantic import AnyHttpUrl
 from yarl import URL
 
 from crypto_converter.external.abstract.errors import (
@@ -32,14 +33,14 @@ ORDER BY (instrument, timestamp)
 class ChClientBase:
     """Base class for clickhouse storage client."""
 
-    def __init__(self, dsn: str) -> None:
+    def __init__(self, dsn: AnyHttpUrl) -> None:
         """Initialize `ChQuotesWriter`.
 
         Args:
-            dsn (`str`): storage url to connect to.
+            dsn (`AnyHttpUrl`): storage url to connect to.
 
         """
-        self._parsed_url = parsed_url = URL(dsn)
+        self._parsed_url = parsed_url = URL(dsn.encoded_string())
         self._session: ClientSession | None = None
         self._client: ChClient | None = None
         self._url_without_creds = (
