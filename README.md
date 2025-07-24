@@ -2,7 +2,7 @@
 
 **Crypto Converter** is a Python-based service consisting of two components:
 
-- **Currency Conversion API** – provides HTTP JSON API for converting cryptocurrency amounts for selected timestamp.
+- **Currency Conversion API** – provides HTTP JSON API for converting cryptocurrency amounts.
 - **Quote Consumer** – continuously fetches real-time cryptocurrencies tickers prices from crypto exchange and stores them for conversion.
 
 ---
@@ -14,10 +14,11 @@ This repository includes two services that run as **separate processes**, but sh
 1. **Currency Conversion API**
    - Asynchronous HTTP API server for currency conversion.
    - Exposes endpoint `/convert`.
+   - Able to read from quotes storage.
 
 2. **Quote Consumer**
    - Connects to exchange via public API.
-   - Stores quotes every 30 seconds.
+   - Writes quotes to quotes storage every 30 seconds.
    - Keeps only the last 7 days of data.
 
 ---
