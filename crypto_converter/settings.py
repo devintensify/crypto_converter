@@ -77,7 +77,7 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_nested_delimiter="__")
 
-    def model_post_init(self, _: dict[str, Any] | None) -> None:  # noqa: C901
+    def model_post_init(self, _: dict[str, Any] | None) -> None:  # noqa: C901, PLR0912
         """Additional validation logic for settings model."""
         error_message: str | None = None
         if self.exchange_name not in _SUPPORTED_EXCHANGES:
@@ -126,13 +126,28 @@ class Settings(BaseSettings):
                 "Transport `local_queue_max_size` must be more "
                 f"than {_MIN_TRANSPORT_LOCAL_QUEUE_SIZE}."
             )
+        elif self.quote_reader.outdated_interval < 0:
+            error_message = (
+                "Quote reader `outdated_interval` must be positive. "
+                f"Got {self.quote_reader.outdated_interval}."
+            )
+        elif self.quote_consumer.flush_interval < 0:
+            error_message = (
+                "Quote consumer `flush_interval` must be positive. "
+                f"Got {self.quote_consumer.flush_interval}."
+            )
+        elif self.quote_consumer.delete_interval < 0:
+            error_message = (
+                "Quote consumer `delete_interval` must be positive. "
+                f"Got {self.quote_consumer.delete_interval}."
+            )
         elif (
             self.quote_consumer.flush_interval
             > 0.5 * self.quote_reader.outdated_interval
         ):
             error_message = (
                 "Quote consumer `flush_interval` must be at least twice "
-                "as low as quote reader outdated_interval."
+                "as low as quote reader `outdated_interval`."
                 f"Got `flush_interval`: {self.quote_consumer.flush_interval}, "
                 f"`outdated_interval`: {self.quote_reader.outdated_interval}."
             )
