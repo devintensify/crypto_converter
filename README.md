@@ -46,6 +46,8 @@ This will launch both services:
 - the API (on `localhost:8000` by default);
 - the quote consumer.
 
+Note: one should use `.env.docker` file for declaring environmental configuration variables.
+
 ### Setting up environment for local development
 
 ```bash
@@ -74,6 +76,8 @@ uv run python -m crypto_converter.api.main --host localhost --port 8000
 uv run python -m crypto_converter.quote_consumer.main
 # note that the last one requires active quotes storage to be run.
 ```
+
+Note: one should use `.env` file for declaring environmental configuration variables.
 
 ---
 
