@@ -1,6 +1,6 @@
 """Converter API app.
 
-Is a demo version without rate limiting.
+Is a demo version without rate limiting and performance/load tests.
 """
 
 from collections.abc import AsyncGenerator

@@ -1,4 +1,7 @@
-"""Quotes consumer."""
+"""Quotes consumer.
+
+Is a demo version without unit tests.
+"""
 
 import asyncio
 import time
