@@ -4,8 +4,18 @@ import argparse
 from pathlib import Path
 from typing import Any, Self
 
-from pydantic import BaseModel, Field
+from pydantic import AnyHttpUrl, BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_SUPPORTED_DATABASES = [
+    "clickhouse",
+]
+
+_SUPPORTED_EXCHANGES = [
+    "bybit",
+]
+
+_MIN_TRANSPORT_LOCAL_QUEUE_SIZE = 10000
 
 
 class TransportConfig(BaseModel):
@@ -23,7 +33,7 @@ class ClickHouseConfig(BaseModel):
     Is a demo version without auth.
     """
 
-    dsn: str = Field(description="Clickhouse DSN")
+    dsn: AnyHttpUrl = Field(description="Clickhouse DSN")
 
 
 class QuoteConsumerConfig(BaseModel):
@@ -31,13 +41,13 @@ class QuoteConsumerConfig(BaseModel):
 
     logs_path: Path = Field(description="Path to directory to store logs in.")
 
-    flush_period: int = Field(
+    flush_interval: int = Field(
         default=30,
-        description="Period of writing quotes to external storage in seconds",
+        description="Interval of writing quotes to external storage in seconds",
     )
-    delete_period: int = Field(
+    delete_interval: int = Field(
         default=7,
-        description="Threshold for old records clean-up in external storage",
+        description="Interval for old records clean-up in external storage",
     )
 
 
@@ -67,14 +77,67 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_nested_delimiter="__")
 
-    def model_post_init(self, _: dict[str, Any] | None) -> None:
+    def model_post_init(self, _: dict[str, Any] | None) -> None:  # noqa: C901
         """Additional validation logic for settings model."""
+        error_message: str | None = None
+        if self.exchange_name not in _SUPPORTED_EXCHANGES:
+            error_message = (
+                f"Exchange {self.exchange_name} is not supported. "
+                f"Consider choosing one from {_SUPPORTED_EXCHANGES}."
+            )
+        elif self.database_type not in _SUPPORTED_DATABASES:
+            error_message = (
+                f"Database type {self.database_type} is not supported. "
+                f"Consider choosing one from {_SUPPORTED_DATABASES}."
+            )
         if self.database_type == "clickhouse" and self.clickhouse is None:
             error_message = (
                 "Expected clickhouse__* parameters in environmental variables. "
                 "Please set different `database_type` or "
                 "declare clickhouse env variables in your .env file."
             )
+        elif not self.quote_consumer.logs_path.exists():
+            error_message = (
+                f"Path for quote consumer logs {self.quote_consumer.logs_path} "
+                "does not exist."
+            )
+        elif not self.quote_consumer.logs_path.is_dir():
+            error_message = (
+                f"Path for quote consumer logs {self.quote_consumer.logs_path} "
+                "Must be a directory."
+            )
+        elif not self.quote_reader.logs_path.exists():
+            error_message = (
+                f"Path for converter api logs {self.quote_reader.logs_path} "
+                "does not exist."
+            )
+        elif not self.quote_reader.logs_path.is_dir():
+            error_message = (
+                f"Path for converter api logs {self.quote_reader.logs_path} "
+                "Must be a directory."
+            )
+        elif self.transport.connections != {"wss": 1}:
+            error_message = (
+                "The only transport connections config supported "
+                f"is a single wss connection. Got {self.transport.connections}"
+            )
+        elif self.transport.local_queue_max_size < _MIN_TRANSPORT_LOCAL_QUEUE_SIZE:
+            error_message = (
+                "Transport `local_queue_max_size` must be more "
+                f"than {_MIN_TRANSPORT_LOCAL_QUEUE_SIZE}."
+            )
+        elif (
+            self.quote_consumer.flush_interval
+            > 0.5 * self.quote_reader.outdated_interval
+        ):
+            error_message = (
+                "Quote consumer `flush_interval` must be at least twice "
+                "as low as quote reader outdated_interval."
+                f"Got `flush_interval`: {self.quote_consumer.flush_interval}, "
+                f"`outdated_interval`: {self.quote_reader.outdated_interval}."
+            )
+
+        if error_message is not None:
             raise ValueError(error_message)
 
 
