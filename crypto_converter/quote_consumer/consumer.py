@@ -1,6 +1,6 @@
 """Quotes consumer.
 
-Is a demo version without unit tests.
+Is a demo version without monitoring of quote consumer status and unit tests.
 """
 
 import asyncio
