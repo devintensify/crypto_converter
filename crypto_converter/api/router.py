@@ -54,6 +54,18 @@ async def convert(
         response_model = models.ConvertResponseInvalidQueryError(message=str(exc))
     else:
         response_model = await conversion_handler.convert(valid_query_model)
+
+    # try inverse instrument name if no ticker data
+    if isinstance(response_model, models.ConvertResponseNoQuotesError):
+        valid_inverse_query_model = models.ConvertQueryParams(
+            amount=amount, from_asset=to_asset, to_asset=from_asset, timestamp=timestamp
+        )
+        response_model_inverse_query = await conversion_handler.convert(
+            valid_inverse_query_model
+        )
+        if isinstance(response_model_inverse_query, models.ConvertResponse):
+            response_model = response_model_inverse_query.inversed()
+
     return response_model
 
 

@@ -37,6 +37,19 @@ class ConvertResponse(BaseModel):
     amount: float = Field(description="Amount in the target currency")
     conversion_rate: float = Field(description="Conversion rate used.")
 
+    def inversed(self) -> "ConvertResponse":
+        """Get inversed `ConvertResponse`.
+
+        Returns:
+            `ConvertResponse`: convert response with inversed amount \
+                and conversion rate.
+
+        """
+        return ConvertResponse(
+            amount=self.amount / (self.conversion_rate**2),
+            conversion_rate=1 / self.conversion_rate,
+        )
+
 
 class ConvertResponseError(BaseModel):
     """Base response of conversion request error.
